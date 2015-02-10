@@ -1,0 +1,113 @@
+<div class="container">
+  <div class="row clearfix">
+    <div class="col-md-12 column">
+      <form method="post" action="">
+        <input type="text" placeholder="name" name='width' class="form-control"/>
+        <input type="text" placeholder="width" value="780" name='width' class="form-control"/>
+        <table class="table table-bordered table-hover" id="items">
+          <thead>
+          <tr>
+            <th class="text-center">
+              Row
+            </th>
+            <th class="text-center">
+              Column
+            </th>
+            <th class="text-center">
+              Image URL
+            </th>
+            <th class="text-center">
+              Link URL
+            </th>
+            <th class="text-center">
+              Column
+            </th>
+            <th class="text-center">
+              Row
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr id='0'>
+            <td>
+              <input type="text" value="1" name='itm[0][row]' readonly class="form-control"/>
+            </td>
+            <td>
+              <input type="text" value="1" name='itm[0][column]' readonly class="form-control"/>
+            </td>
+            <td>
+              <input type="text" name='itm[0][imageURL]' placeholder='Image URL' class="form-control"/>
+            </td>
+            <td>
+              <input type="text" name='itm[0][linkURL]' placeholder='Link URL' class="form-control"/>
+            </td>
+            <td>
+              <a class="btn btn-default pull-left text-center glyphicon glyphicon-plus add-column"></a>
+              <a class="btn btn-default pull-right text-center glyphicon glyphicon-minus remove-column"></a>
+            </td>
+            <td>
+              <a class="btn btn-default pull-left glyphicon glyphicon-plus add-row"></a>
+              <a class="btn btn-default pull-right glyphicon glyphicon-minus delete-row"></a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <a class="btn btn-default pull-left add-row">Add Row</a><a class="pull-left btn btn-default delete-row">Delete Row</a>
+        <button type="submit" class="btn btn-default pull-left">Submit</button>
+      </form>
+    </div>
+  </div>
+
+
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var i = 1;
+        var r = 1;
+        var c = 1;
+        $(".add-row").click(function () {
+            console.log('add row clicked');
+            c = 1;
+            var shtml = "<tr id='" + i + "'><td><input name='itm[" + i + "][row]' type='text' value='" + (r + 1)  + "' readonly class='form-control'/></td>" +
+                    "<td><input name='itm[" + i + "][column]' type='text' value='" + c  + "' readonly class='form-control'/></td>" +
+                    "<td><input name='itm[" + i + "][imageURL]' type='text' placeholder='imageURL' class='form-control input-md'/> </td>" +
+                    "<td><input name='itm[" + i + "][linkURL]' type='text' placeholder='Link URL'  class='form-control input-md'></td>" +
+                    "<td><a class='btn btn-default pull-left glyphicon glyphicon-plus add-column'></a><a class='btn btn-default pull-right text-center glyphicon glyphicon-minus remove-column'></a></td>" +
+                    "<td><a class='btn btn-default pull-left glyphicon glyphicon-plus add-row'></a><a class='btn btn-default pull-right glyphicon glyphicon-minus remove-row'></a></td></tr>";
+//            $("tr:last").after(shtml);
+//            $(this).closest('TR').after(shtml);
+//            $('#' + i).html(shtml);
+            $('#items').append(shtml);
+            i++;
+            r++;
+        });
+
+        $(".delete-row").click(function () {
+            if (r > 1) {
+                $("#addr" + (r - 1)).html('');
+                r--;
+            }
+        });
+
+        $(".add-column").click(function () {
+            console.log('add column clicked');
+            var shtml = "<tr id='" + i + "'><td><input name='itm[" + i + "][row]' type='text' value='" + r  + "' readonly class='form-control'/></td>" +
+                    "<td><input name='itm[" + i + "][column]' type='text' value='" + (c+1)  + "' readonly class='form-control'/></td>" +
+                    "<td><input name='itm[" + i + "][imageURL]' type='text' placeholder='imageURL' class='form-control input-md'/> </td>" +
+                    "<td><input name='itm[" + i + "][linkURL]' type='text' placeholder='Link URL'  class='form-control input-md'></td>" +
+                    "<td><a class='btn btn-default pull-left glyphicon glyphicon-plus add-column'></a><a class='btn btn-default pull-right text-center glyphicon glyphicon-minus remove-column'></a></td>" +
+                    "<td><a class='btn btn-default pull-left glyphicon glyphicon-plus add-row'></a><a class='btn btn-default pull-right glyphicon glyphicon-minus remove-row'></a></td></tr>";
+
+            $('#items').append(shtml);
+            i++;
+            c++;
+        });
+
+        $(".delete-column").click(function () {
+            if (r > 1) {
+                $("#addr" + (r - 1)).html('');
+                c--;
+            }
+        });
+    });
+</script>
