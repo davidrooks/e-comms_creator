@@ -1,5 +1,5 @@
 <ul>
-  <% @ecomms.each do |e| %>
-      <li><% e[:name] %></li>
-    <% end %>
+  <% for @e in @ecomms %>
+      <li><%= link(:url => "/show/", :text => @e[:name]) %></li>
+  <% end %>
 </ul>

@@ -1,5 +1,5 @@
 <ul>
-  <% @ecomms.each do |e| %>
-    li<% link_to()
+  <% for @e in @ecomms %>
+      <li><%= @e[:name] %></li>
   <% end %>
 </ul>

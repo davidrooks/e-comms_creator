@@ -45,6 +45,9 @@ configure do
   logger.level = Logger::DEBUG
 
   set :logger, logger
+
+  MongoMapper.database = 'ecomms'
+
 end
 
 # Convenience method
@@ -65,13 +68,16 @@ before '/secure/*' do
 end
 
 get '/' do
+  @ecomms = Ecomm.all
   erb :index
 end
 
-get '/show' do
-  @ecomms = Ecomm.all()
-  erb :show_comms
+get '/show/:id' do
+  ecomm = Ecomms.find(:id)
+  erb "<pre><code>#{JSON.pretty_generate(ecomm)}</code></pre>"
+
 end
+
 get '/create' do
   erb :create_comms
 end
@@ -79,25 +85,16 @@ end
 post '/create' do
   logger.debug "printing post params"
   logger.debug "params: #{params.inspect}"
-  erb "<pre><code>#{JSON.pretty_generate(params)}</code></pre><pre><code>#{save(params)}</code></pre>"
+  save(params)
+  redirect '/'
 end
 
 def save(params)
-  puts "#{params}"
-  puts "#{params[:itm].to_a}"
-  puts "#{params[:itm].to_a[1]}"
-  puts "#{params[:itm].to_a[1][1]}"
-  puts "#{params[:itm].to_a[1][1][:row]}"
-
-  curRow = 1
-  curCol = 1
   row = Row.new()
   col = Column.new()
-
   ecomm = Ecomm.new(:width => params[:width].to_i, :name => params[:name])
 
   params[:itm].each do |index, item|
-    puts "processing item #{index.to_s} of #{params[:itm].length-1}"
     elem = Element.new(:imageURL => item[:imageURL], :linkURL => item[:linkURL])
     col[:element] = elem
     row.columns << col
@@ -105,17 +102,10 @@ def save(params)
       ecomm.rows  << row
     elsif (params[:itm].to_a[index.to_i+1][1][:row] != item[:row])
       #we are on last item or on next item will we start of new row so we can write the current one
-    # if (item[:row] != curRow) || (index == params[:itm].length-1)
-      puts "item #{index.to_s} finishing row"
       ecomm.rows  << row
       row = Row.new()
-      curRow = item[:row]
-      curCol = 1
     else
-      #next item has same row
-      puts "item #{index.to_s} adding column"
   #     we have a row with multiple columns
-      ++curCol
     end
     col = Column.new()
   end
@@ -124,37 +114,6 @@ def save(params)
   ecomm.save
 end
 
-def convert(params)
-  row = []
-  curRow = 0
-
-  params[:itm].each do |index, item|
-    curRow = item[:row]
-    if !row.include? item[:row]
-      row.push([])
-    end
-  end
-end
-
-def printHTML(params)
-  out = ''
-  row = 0
-  column = 1
-  out = "<table border='0' cellspacing='0' cellpadding='0' style='border-collapse: collapse; border-spacing: 0;'>"
-  params[:itm].each do |index, item|
-    if item[:row] != row
-     out = out + "<tr>"
-      ++row
-    end
-    if item[:column] > 1
-      out = out + "<table border='0' cellspacing='0' cellpadding='0'>"
-    end
-
-    out = out + '<td>' + item[:row] + ' ' + item[:column] + ' ' + item[:imageURL] + ' ' + item[:linkURL] + '</td>'
-  end
-
-  return out
-end
 
 get '/login/form' do
   erb :login_form
