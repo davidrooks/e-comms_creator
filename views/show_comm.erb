@@ -1,0 +1,15 @@
+<div class="row">
+  <h1>HTML</h1>
+  <a href="/edit/<%= @e[:_id] %>" class="btn glyphicon glyphicon-pencil">Edit</a>
+  <a href="/delete/<%= @e[:_id] %>" class="btn glyphicon glyphicon-trash">Delete</a>
+  <pre>
+    <code><%= @e[:html] %></code>
+  </pre>
+</div>
+</br>
+<div class="row">
+  <h1>JSON</h1>
+  <pre>
+    <code><%= JSON.pretty_generate(JSON.parse(@e.to_json))%></code>
+  </pre>
+</div>

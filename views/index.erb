@@ -1,5 +1,10 @@
 <ul>
+  <% if !@ecomms.nil? %>
   <% for @e in @ecomms %>
-      <li><%= link(:url => "/show/", :text => @e[:name]) %></li>
+      <li><a href="/show/<%= @e[:_id] %>"><%= @e[:name] %></a></li>
+  <% end %>
+      <% else %>
+        <p>No ecomms created yet</p>
+        <a href="/create">Create your first ecomm</a>
   <% end %>
 </ul>
