@@ -4,6 +4,7 @@
       <form method="post" action="">
         <input type="text" value="<%= @e[:name] %>" name='name' class="form-control" required/>
         <input type="text" value="<%= @e[:width] %>" name='width' class="form-control"/>
+        <div id="elements">
         <table class="table table-bordered table-hover" id="items">
           <thead>
           <tr>
@@ -32,7 +33,7 @@
                 <% row.columns.each do |col| %>
                   <tr>
                     <td>
-                      <input type="text" value="<%= col.element[:row] %>" name='itm[<%= r %>][row]'cl ass="form-control"/>
+                      <input type="text" value="<%= col.element[:row] %>" name='itm[<%= r %>][row]' class="form-control"/>
                     </td>
                     <td>
                       <input type="text" value="<%= col.element[:column] %>" name='itm[<%= r %>][column]' class="form-control"/>
@@ -47,11 +48,12 @@
                       <a class="btn btn-default pull-right glyphicon glyphicon-minus delete-row"></a>
                     </td>
                   </tr>
-                  <% ++r %>
+                  <% r = r + 1 %>
               <% end %>
           <% end %>
           </tbody>
         </table>
+          </div>
         <a class="btn btn-default pull-left add-row">Add Row</a>
         <button type="submit" class="btn btn-default pull-left">Submit</button>
       </form>

@@ -1,5 +1,5 @@
 <ul>
-  <% if !@ecomms.nil? %>
+  <% if !@ecomms.nil? && @ecomms.size != 0 %>
   <% for @e in @ecomms %>
       <li><a href="/show/<%= @e[:_id] %>"><%= @e[:name] %></a></li>
   <% end %>

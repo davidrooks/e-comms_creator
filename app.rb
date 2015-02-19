@@ -27,13 +27,14 @@ helpers do
       session[:user].name
     end
   end
+
   include Rack::Utils
   alias_method :h, :escape_html
 end
 
 def logged_in
   if session[:user].nil?
-    if	session[:id].nil?
+    if session[:id].nil?
       session[:id] ||= random_string(20)
     end
   else
@@ -72,7 +73,7 @@ post '/user/signup' do
   if u.save
     redirect "/user/signin"
   else
-    @error = u.errors.map{|k,v| "#{k}: #{v}"}.join("<br/> ")
+    @error = u.errors.map { |k, v| "#{k}: #{v}" }.join("<br/> ")
     halt erb :signup
   end
 end
@@ -160,36 +161,60 @@ end
 # end
 
 
-
 # get '/secure/place' do
 #   erb "This is a secret place that only <%=session[:identity]%> has access to!"
 # end
 
 def save(ecomm, params)
-  row = Row.new()
-  col = Column.new()
-  puts params
+  # row = Row.new()
+  # col = Column.new()
+  # puts params
+  # puts ""
+  # puts ""
+  # puts params[:itm]
+  # puts ""
+  # puts ""
+  # puts params[:itm].to_a.to_s
+  # puts ""
+  # puts ""
+
+  i = 0
+  if params[:itm].nil?
+    #no elements, nothing to save
+    return ecomm
+  end
+
+
   params[:itm].each do |index, item|
-    puts "current item = #{index.to_i+1}"
-    puts "total items = #{params[:itm].length}"
-    puts "item = #{item}"
+    # puts "current index = #{index.to_s}"
+    # puts "current index = #{i}"
+    # puts "current item = #{index.to_i+1}"
+    # puts "current item = #{item}"
+    # puts "param item = #{params[:itm].to_a[i]}"
+    # puts "param item = #{params[:itm].to_a[index.to_i]}"
+    # puts "total items = #{params[:itm].to_a.length}"
+    # puts "row number = #{item[:row]}"
+    # puts ""
+    # puts ""
 
     elem = Element.new(:imageURL => item[:imageURL], :linkURL => item[:linkURL], :row => item[:row], :column => item[:column])
     col[:element] = elem
     row.columns << col
-    if (index.to_i == params[:itm].length-1)
+    if (i.to_i == params[:itm].to_a.length-1)
       #we are on last item
       puts "saving row"
-      ecomm.rows  << row
-    elsif (params[:itm].to_a[index.to_i+1][1][:row] != item[:row])
+      ecomm.rows << row
+    elsif (params[:itm].to_a[i+1][1][:row].to_i != item[:row].to_i)
       #next item will we start of new row so we can write the current one
       puts "saving row and creating new row"
-      ecomm.rows  << row
+      ecomm.rows << row
       row = Row.new()
     else
-  #     we have a row with multiple columns so do not write the row yet
+      #     we have a row with multiple columns so do not write the row yet
+      puts "multiple rows"
     end
     col = Column.new()
+    i = i + 1
   end
   ecomm.save
   return ecomm
