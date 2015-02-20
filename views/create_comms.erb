@@ -52,3 +52,57 @@
     </div>
   </div>
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var i = <%= @e.nil? ? 0 : @e.rows.length %>;
+        var r = <%= @e.nil? ? 0 : @e.rows.length %>;
+
+        $(".add-row").click(function () {
+            console.log('add row clicked');
+
+            var shtml = "<tr id='" + i + "'><td><input name='itm[" + i + "][row]' type='text' required class='form-control'/></td>" +
+                    "<td><input name='itm[" + i + "][column]' type='text' required class='form-control'/></td>" +
+                    "<td><input name='itm[" + i + "][imageURL]' type='text' placeholder='imageURL' required class='form-control input-md'/> </td>" +
+                    "<td><input name='itm[" + i + "][linkURL]' type='text' placeholder='Link URL'  class='form-control input-md'></td>" +
+                    "<td><a class='btn btn-default pull-right glyphicon glyphicon-minus remove-row'></a></td></tr>";
+//            $("tr:last").after(shtml);
+//            $(this).closest('TR').after(shtml);
+//            $('#' + i).html(shtml);
+            $('#items').append(shtml);
+            i++;
+            r++;
+        });
+
+        $("#elements").on("click", "a", function() {
+            var tr = $(this).closest('tr');
+            tr.css("background-color", "#FF3700");
+            tr.fadeOut(400, function () {
+                tr.remove();
+            });
+            return false;
+        });
+
+//        $(".add-column").click(function () {
+//            console.log('add column clicked');
+//            var shtml = "<tr id='" + i + "'><td><input name='itm[" + i + "][row]' type='text' value='" + r + "' class='form-control'/></td>" +
+//                    "<td><input name='itm[" + i + "][column]' type='text' value='" + (c + 1) + "' class='form-control'/></td>" +
+//                    "<td><input name='itm[" + i + "][imageURL]' type='text' placeholder='imageURL' class='form-control input-md'/> </td>" +
+//                    "<td><input name='itm[" + i + "][linkURL]' type='text' placeholder='Link URL'  class='form-control input-md'></td>" +
+//                    "<td><a class='btn btn-default pull-right glyphicon glyphicon-minus delete-row'></a></td></tr>";
+//
+//            $('#items').append(shtml);
+////            $(this).closest('TR').after(shtml);
+//            i++;
+//            c++;
+//        });
+//
+//        $(".delete-column").click(function () {
+//            var tr = $(this).closest('tr');
+//            tr.css("background-color", "#FF3700");
+//            tr.fadeOut(400, function () {
+//                tr.remove();
+//            });
+//            return false;
+//        });
+    });
+</script>

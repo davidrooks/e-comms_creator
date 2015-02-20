@@ -108,7 +108,7 @@ get '/' do
   if session[:user].nil?
     redirect "/user/signin"
   else
-    @ecomms = Ecomm.all("user._id" => session[:user].id)
+    @ecomms = Ecomm.all("user_id" => session[:user].id)
     erb :index
   end
 end
@@ -119,7 +119,7 @@ get '/show/:id' do
 end
 
 get '/create' do
-  puts "logged in user: #{session[:user].to_json}"
+  # puts "logged in user: #{session[:user].to_json}"
   erb :create_comms
 end
 
@@ -150,24 +150,51 @@ post '/edit/:id' do
   redirect "/show/#{params[:id]}"
 end
 
-# get '/login/form' do
-#   erb :login_form
-# end
-#
-# post '/login/attempt' do
-#   session[:identity] = params['username']
-#   where_user_came_from = session[:previous_url] || '/'
-#   redirect to where_user_came_from
-# end
+get '/index-new' do
+  erb :index_new
+end
 
+get '/element/show' do
+  puts "user = #{session[:user]}"
+  puts "user id = #{session[:user].id}"
+  @e = Item.all("user_id" => session[:user].id)
+  erb :show_element
+end
 
-# get '/secure/place' do
-#   erb "This is a secret place that only <%=session[:identity]%> has access to!"
-# end
+get '/element/create' do
+  erb :create_element
+end
+
+get '/element/edit/:id' do
+  @e = Item.find(params[:id])
+  erb :edit_element
+end
+
+post '/element/edit/:id' do
+  @e = Item.find(params[:id])
+  @e[:imageURL] = params[:imageURL]
+  @e.save
+  redirect '/element/show'
+end
+
+post '/element/create' do
+  e = Item.new(:imageURL => params[:imageURL], :user => session[:user])
+  e.save
+  redirect '/index-new'
+end
+
+get '/element/delete/:id' do
+  Item.destroy(params[:id])
+  redirect '/element/show'
+end
+
+get '/ecomm/create' do
+  erb :create_ecomm
+end
 
 def save(ecomm, params)
-  # row = Row.new()
-  # col = Column.new()
+  row = Row.new()
+  col = Column.new()
   # puts params
   # puts ""
   # puts ""

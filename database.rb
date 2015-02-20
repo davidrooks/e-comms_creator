@@ -13,6 +13,8 @@ class User
   key :email, String
   key :hashPass, String
   key :salt, String
+  many :ecomms
+  many :items
   timestamps!
 
   timestamps!
@@ -49,6 +51,9 @@ class User
     return u if User.encrypt(pass, u.salt) == u.hashPass
     nil
   end
+
+  # belongs_to :Element
+
 end
 
 class Element
@@ -77,8 +82,15 @@ class Ecomm
   key :name, String
   key :width,  Integer
   key :html, String
-  key :user, User
   many :rows
+  belongs_to :user
+end
+
+class Item
+  include MongoMapper::Document
+
+  key :imageURL, String
+  belongs_to :user
 end
 
 def random_string(len)

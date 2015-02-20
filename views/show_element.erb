@@ -1,0 +1,11 @@
+
+  <% if !@e.nil? && @e.size != 0 %>
+      <% for e in @e %>
+          <div class="row panel panel-default">
+            <div class="col-md-1"><a href="/element/edit/<%= e[:_id] %>" class="btn glyphicon glyphicon-pencil">Edit</a></div>
+            <div class="col-md-1"><a href="/element/delete/<%= e[:_id] %>" class="btn glyphicon glyphicon-trash">Delete</a></div>
+            <div class="col-md-8"><img src="<%= e[:imageURL] %>"/></div>
+
+          </div>
+      <% end %>
+  <% end %>
