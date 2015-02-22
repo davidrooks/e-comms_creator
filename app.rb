@@ -216,7 +216,14 @@ get '/element/delete/:id' do
 end
 
 get '/ecomm/create' do
-  erb :create_ecomm
+  @groups = getGroups
+  erb :create_ecomm_step1
+end
+
+
+post '/ecomm/create' do
+  @items = Item.all({:group => params[:group]})
+  erb :create_ecomm_step2
 end
 
 def save(ecomm, params)
