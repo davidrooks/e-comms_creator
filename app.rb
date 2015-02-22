@@ -151,36 +151,63 @@ post '/edit/:id' do
 end
 
 get '/index-new' do
+  @groups = getGroups
   erb :index_new
 end
 
 get '/element/show' do
   puts "user = #{session[:user]}"
   puts "user id = #{session[:user].id}"
+  # @ecomms = Ecomm.all("user_id" => session[:user].id)
   @e = Item.all("user_id" => session[:user].id)
+
   erb :show_element
 end
 
+get '/element/show/:group' do
+
+  @e = Item.all({"user_id" => session[:user].id, :group => params[:group]})
+
+  erb :show_element
+end
+
+
 get '/element/create' do
+
+  @groups = getGroups
+  puts "arr = #{@groups.to_s}"
   erb :create_element
+end
+
+post '/element/create' do
+  puts params
+  e = Item.new(:imageURL => params[:imageURL], :user => session[:user], :group => params[:group])
+  e.save
+  redirect '/index-new'
 end
 
 get '/element/edit/:id' do
   @e = Item.find(params[:id])
+
+  @groups = getGroups
+
+  puts "item = #{@e[:group]}"
+  puts "group = #{@groups}"
   erb :edit_element
 end
 
 post '/element/edit/:id' do
-  @e = Item.find(params[:id])
-  @e[:imageURL] = params[:imageURL]
-  @e.save
-  redirect '/element/show'
-end
+  e = Item.find(params[:id])
+  e[:group] = params[:group]
+  if params[:new_group] != ''
+    e[:group] = params[:new_group]
+  elsif
+    e[:group] = params[:group]
+  end
+  e[:imageURL] = params[:imageURL]
 
-post '/element/create' do
-  e = Item.new(:imageURL => params[:imageURL], :user => session[:user])
   e.save
-  redirect '/index-new'
+  redirect '/element/show'
 end
 
 get '/element/delete/:id' do
@@ -276,5 +303,16 @@ def createHTML(data)
 
   data[:html] = html
   data.save
+end
+
+def getGroups
+  items = Item.all()
+  arr = []
+  items.each do |g|
+    if !arr.include? g[:group]
+      arr << g[:group]
+    end
+  end
+  return arr
 end
 

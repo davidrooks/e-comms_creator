@@ -51,9 +51,6 @@ class User
     return u if User.encrypt(pass, u.salt) == u.hashPass
     nil
   end
-
-  # belongs_to :Element
-
 end
 
 class Element
@@ -90,7 +87,9 @@ class Item
   include MongoMapper::Document
 
   key :imageURL, String
+  key :group, String
   belongs_to :user
+
 end
 
 def random_string(len)

@@ -1,7 +1,14 @@
 <ul>
   <li>Elements
     <ul>
-        <li><a href="/element/show">Show All</a></li>
+        <li>Show</li>
+        <ul>
+          <li><a href="/element/show">Show All</a></li>
+          <% @groups.each do |g| %>
+            <li><a href="/element/show/<%= g %>"/><%= g %></li>
+              <% end %>
+
+        </ul>
         <li><a href="/element/create">Create</a></li>
     </ul>
   </li>

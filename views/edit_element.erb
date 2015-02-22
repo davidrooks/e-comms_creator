@@ -1,5 +1,16 @@
 <form method="post" action="">
   <div class="form-group">
+    <select class="form-control" name="group">
+      <option value=""></option>
+      <% @groups.each do |g| %>
+          <% if g == @e[:group] %>
+              <option value="<%= g %>" selected><%= g %></option>
+          <% else %>
+              <option value="<%= g %>"><%= g %></option>
+          <% end %>
+      <% end %>
+    </select>
+    <input type="text" class="form-control" name="new_group" placeholder="Enter new group"/>
     <input type="text" class="form-control" name="imageURL" value="<%= @e[:imageURL] %>" required/>
   </div>
   <button type="submit" class="btn btn-default">Save</button>
