@@ -1,5 +1,9 @@
+<form method="post" action="">
 <div id="content">
   <% @items.each do |i| %>
-    <div id="makeMeDraggable"><img src="<%= i[:imageURL] %>"/> </div>
-      <% end %>
+    <div class="makeMeDraggable" id="<%= i[:_id] %>"><img class="small" src="<%= i[:imageURL] %>"/> </div>
+  <% end %>
 </div>
+  <button type="submit" class="btn btn-default">Create</button>
+</form>
+

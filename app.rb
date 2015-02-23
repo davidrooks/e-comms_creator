@@ -220,9 +220,10 @@ get '/ecomm/create' do
   erb :create_ecomm_step1
 end
 
-
 post '/ecomm/create' do
+  puts "params = #{params}"
   @items = Item.all({:group => params[:group]})
+  puts "items = #{@items.to_s}"
   erb :create_ecomm_step2
 end
 

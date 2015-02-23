@@ -6,9 +6,6 @@
   <!-- Bootstrap -->
   <script src="/vendor/jquery-2.1.3.min.js"></script>
   <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-      #makeMeDraggable { width: 300px; height: 300px; background: red; }
-  </style>
 
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
@@ -17,7 +14,7 @@
       $( init );
 
       function init() {
-          $('#makeMeDraggable').draggable( {
+          $('.makeMeDraggable').draggable( {
               cursor: 'move',
               containment: 'content',
               stop: handleDragStop
@@ -27,8 +24,36 @@
       function handleDragStop( event, ui ) {
           var offsetXPos = parseInt( ui.offset.left );
           var offsetYPos = parseInt( ui.offset.top );
+          var id =
           alert( "Drag stopped!\n\nOffset: (" + offsetXPos + ", " + offsetYPos + ")\n");
       }
+
+      $(document).ready(function() {
+          $('.small img').each(function() {
+              var maxWidth = 100; // Max width for the image
+              var maxHeight = 100;    // Max height for the image
+              var ratio = 0.5;  // Used for aspect ratio
+              var width = $(this).width();    // Current image width
+              var height = $(this).height();  // Current image height
+
+// Check if the current width is larger than the max
+              if(width > maxWidth){
+                  ratio = maxWidth / width;   // get ratio for scaling image
+                  $(this).css("width", maxWidth); // Set new width
+                  $(this).css("height", height * ratio);  // Scale height based on ratio
+                  height = height * ratio;    // Reset height to match scaled image
+                  width = width * ratio;    // Reset width to match scaled image
+              }
+
+// Check if current height is larger than max
+              if(height > maxHeight){
+                  ratio = maxHeight / height; // get ratio for scaling image
+                  $(this).css("height", maxHeight);   // Set new height
+                  $(this).css("width", width * ratio);    // Scale width based on ratio
+                  width = width * ratio;    // Reset width to match scaled image
+              }
+          });
+      });
 
   </script>
 </head>

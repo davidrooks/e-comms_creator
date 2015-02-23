@@ -8,7 +8,7 @@ Go!
 
 Download and install mongo:
     brew install mongo
-    mongod --config /usr/local/etc/mongod.conf                  #start mongo database
+    mongod                     #start mongo database
 
 Download and run e-comm creator:
 
