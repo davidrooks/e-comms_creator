@@ -228,7 +228,8 @@ post '/ecomm/create_step_1' do
 end
 
 post '/ecomm/create_step_2' do
-  "Hello world"
+  puts "items = #{@items.to_json}"
+  "hello world"
 end
 
 
@@ -238,8 +239,8 @@ post '/ecomm/item/savePos' do
   puts "x pos = #{params[:x]}"
   puts "y pos = #{params[:y]}"
   i = Item.find(params[:id])
-  i[:xPos] = x
-  i[:yPos] = y
+  i[:xPos] = params[:x]
+  i[:yPos] = params[:y]
   i.save
 end
 
