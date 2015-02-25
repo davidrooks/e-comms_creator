@@ -1,0 +1,10 @@
+<form method="post" action="/ecomm/create_step_1">
+  <input type="text" name="name" required/>
+  <select name="group">
+    <% @groups.each do |g| %>
+        <option value="<%= g %>"><%= g %></option>
+    <% end %>
+
+  </select>
+  <button type="submit">Next</button>
+</form>

@@ -88,6 +88,8 @@ class Item
 
   key :imageURL, String
   key :group, String
+  key :xPos, Integer
+  key :yPos, Integer
   belongs_to :user
 
 end

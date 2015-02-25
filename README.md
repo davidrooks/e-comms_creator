@@ -23,4 +23,4 @@ Then open [http://localhost:4567/](http://localhost:4567/)
 
 What's next?
 ============
--
+- openshift integration / deployment

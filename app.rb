@@ -220,11 +220,64 @@ get '/ecomm/create' do
   erb :create_ecomm_step1
 end
 
-post '/ecomm/create' do
-  puts "params = #{params}"
+post '/ecomm/create_step_1' do
+  # puts "params = #{params}"
   @items = Item.all({:group => params[:group]})
-  puts "items = #{@items.to_s}"
+  # puts "items = #{@items.to_s}"
   erb :create_ecomm_step2
+end
+
+post '/ecomm/create_step_2' do
+
+end
+
+
+post '/ecomm/item/savePos' do
+  puts "params = #{params}"
+  puts "id = #{params[:id]}"
+  puts "x pos = #{params[:x]}"
+  puts "y pos = #{params[:y]}"
+end
+
+get '/seed' do
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_01.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_02.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_03.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_04.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_05.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_06.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_07.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_08.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_09.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_10.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_11.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_12.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_13.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_14.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_15.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_16.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_17.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_18.jpg', :group => 'february', :user => session[:user])
+  i.save
+  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_19.jpg', :group => 'february', :user => session[:user])
+  i.save
 end
 
 def save(ecomm, params)

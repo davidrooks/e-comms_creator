@@ -1,9 +1,10 @@
-<form method="post" action="">
-<div id="content">
+<form method="post" action="/ecomm/create_step_2">
+  <button type="submit" class="btn btn-default" id="save_ecomm">Create</button>
+<div id="content" style="border:1px solid black; width:800px;">
   <% @items.each do |i| %>
-    <div class="makeMeDraggable" id="<%= i[:_id] %>"><img class="small" src="<%= i[:imageURL] %>"/> </div>
+    <img id="<%= i[:_id] %>" class="makeMeDraggable" src="<%= i[:imageURL] %>"/>
   <% end %>
 </div>
-  <button type="submit" class="btn btn-default">Create</button>
+
 </form>
 
