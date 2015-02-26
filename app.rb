@@ -201,8 +201,7 @@ post '/element/edit/:id' do
   e[:group] = params[:group]
   if params[:new_group] != ''
     e[:group] = params[:new_group]
-  elsif
-    e[:group] = params[:group]
+  elsif e[:group] = params[:group]
   end
   e[:imageURL] = params[:imageURL]
 
@@ -223,15 +222,69 @@ end
 post '/ecomm/create_step_1' do
   # puts "params = #{params}"
   @items = Item.all({:group => params[:group]})
+  @name = params[:name]
+  @group = params[:group]
   # puts "items = #{@items.to_s}"
   erb :create_ecomm_step2
 end
 
 post '/ecomm/create_step_2' do
-  puts "items = #{@items.to_json}"
-  "hello world"
+  @items = Item.all(:group => params[:group], :order => :yPos)
+  rows = []
+  cols = []
+
+  @items.each_with_index do |i, index|
+    puts "item = #{i}"
+    puts "index = #{index}"
+    cols << i
+    if i != @items.last
+      #we are not on the last item so check the next items position
+      next_i = @items[index+1]
+      if next_i[:yPos] > i[:yPos]
+        #next item is lower than current item so it sits in a new row
+        rows << cols
+        cols = []
+      end
+    else
+      rows << cols
+    end
+  end
+  puts "rows = #{rows.to_s}"
+
+  @html = createTable(rows)
+  puts "html: #{@html}"
+
+  erb :create_ecomm_step3
 end
 
+def createTable(rows)
+  html = "<table  border='0' cellspacing='0' cellpadding='0'>"
+  rows.each do |row|
+    html = html + "<tr>"
+    row.each do |col|
+      if col.kind_of?(Array)
+        puts "shouldnt reach here yet"
+        html = html + createTable(col)
+      elsif row.count == 1
+        #only 1 item in this row
+        html = html + "<td><img src='" + col[:imageURL] + "'/></td>"
+      else
+        if col == row.first
+          html = html + "<table  border='0' cellspacing='0' cellpadding='0'>"
+          html = html + "<tr>"
+        end
+        html = html + "<td><img src='" + col[:imageURL] + "'/></td>"
+        if col == row.last
+          html = html + "</tr>"
+          html = html + "</table>"
+        end
+      end
+    end
+    html = html + "</tr>"
+  end
+  html = html + "</table>"
+  return html
+end
 
 post '/ecomm/item/savePos' do
   puts "params = #{params}"
@@ -306,17 +359,6 @@ def save(ecomm, params)
 
 
   params[:itm].each do |index, item|
-    # puts "current index = #{index.to_s}"
-    # puts "current index = #{i}"
-    # puts "current item = #{index.to_i+1}"
-    # puts "current item = #{item}"
-    # puts "param item = #{params[:itm].to_a[i]}"
-    # puts "param item = #{params[:itm].to_a[index.to_i]}"
-    # puts "total items = #{params[:itm].to_a.length}"
-    # puts "row number = #{item[:row]}"
-    # puts ""
-    # puts ""
-
     elem = Element.new(:imageURL => item[:imageURL], :linkURL => item[:linkURL], :row => item[:row], :column => item[:column])
     col[:element] = elem
     row.columns << col
@@ -340,36 +382,36 @@ def save(ecomm, params)
   return ecomm
 end
 
-def createHTML(data)
-  html = '<html><head><title></title></head><body><table border="0" cellspacing="0" cellpadding="0">'
-  data.rows.each do |row|
-    html = html + "<tr>"
-    row.columns.each do |col|
-      if row.columns.size > 1 && row.columns.first == col
-        html = html + '<table border="0" cellspacing="0" cellpadding="0">'
-        html = html + '<tr>'
-      end
-      html = html + "<td>"
-      if col.element[:linkURL]
-        html = html + "<a href='#{col.element[:linkURL]}'>"
-      end
-      html = html + "<img src='#{col.element[:imageURL]}'>"
-      if col.element[:linkURL]
-        html = html + "</a>"
-      end
-      html = html + "</td>"
-
-      if row.columns.size > 1 && row.columns.last == col
-        html = html + '</tr></table>'
-      end
-    end
-    html = html + '</tr>'
-  end
-  html = html + '</table></body></html>'
-
-  data[:html] = html
-  data.save
-end
+# def createHTML(data)
+#   html = '<html><head><title></title></head><body><table border="0" cellspacing="0" cellpadding="0">'
+#   data.rows.each do |row|
+#     html = html + "<tr>"
+#     row.columns.each do |col|
+#       if row.columns.size > 1 && row.columns.first == col
+#         html = html + '<table border="0" cellspacing="0" cellpadding="0">'
+#         html = html + '<tr>'
+#       end
+#       html = html + "<td>"
+#       if col.element[:linkURL]
+#         html = html + "<a href='#{col.element[:linkURL]}'>"
+#       end
+#       html = html + "<img src='#{col.element[:imageURL]}'>"
+#       if col.element[:linkURL]
+#         html = html + "</a>"
+#       end
+#       html = html + "</td>"
+#
+#       if row.columns.size > 1 && row.columns.last == col
+#         html = html + '</tr></table>'
+#       end
+#     end
+#     html = html + '</tr>'
+#   end
+#   html = html + '</table></body></html>'
+#
+#   data[:html] = html
+#   data.save
+# end
 
 def getGroups
   items = Item.all()
