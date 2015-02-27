@@ -23,11 +23,12 @@
           $("#save_ecomm").click(function () {
               console.log('create button clicked');
               $("img").each(function (index) {
-                  console.log(index + ": " + $(this).attr("id"));
+                  var elem_id = $("input").val();
                   var position = $(this).position();
                   var id = $(this).attr("id");
-                  console.log(index + "- left: " + position.left + ", top: " + position.top)
-                  $.post("/ecomm/item/savePos", {id: id, x: position.left, y: position.top});
+                  console.log("ecomm - " + elem_id)
+                  console.log(index + " - left: " + position.left + ", top: " + position.top)
+                  $.post("/ecomm/item/savePos", {ecomm: elem_id, id: id, x: position.left, y: position.top});
               })
           });
       });
@@ -38,48 +39,9 @@
           $('.makeMeDraggable').draggable({
               cursor: 'move',
               containment: 'content',
-              stop: handleDragStop,
               snap: true
           });
       }
-
-      function handleDragStop(event, ui) {
-          var offsetTopXPos = parseInt(ui.offset.left);
-          var offsetTopYPos = parseInt(ui.offset.top);
-          var offsetBottomXPos = parseInt(ui.offset.right);
-          var offsetBottomYPos = parseInt(ui.offset.bottom);
-          var id = $(this).attr("id");
-
-//          $.post("/ecomm/item/savePos", {id:id, x:offsetTopXPos, y:offsetTopYPos });
-//          console.log("Drag stopped!\nOffset: (" + offsetTopXPos + ", " + offsetTopYPos + ")\n" + "ID = " + id + "\n\n");
-      }
-
-      //      $(document).ready(function() {
-      //          $('.small img').each(function() {
-      //              var maxWidth = 100; // Max width for the image
-      //              var maxHeight = 100;    // Max height for the image
-      //              var ratio = 0.5;  // Used for aspect ratio
-      //              var width = $(this).width();    // Current image width
-      //              var height = $(this).height();  // Current image height
-      //
-      //// Check if the current width is larger than the max
-      //              if(width > maxWidth){
-      //                  ratio = maxWidth / width;   // get ratio for scaling image
-      //                  $(this).css("width", maxWidth); // Set new width
-      //                  $(this).css("height", height * ratio);  // Scale height based on ratio
-      //                  height = height * ratio;    // Reset height to match scaled image
-      //                  width = width * ratio;    // Reset width to match scaled image
-      //              }
-      //
-      //// Check if current height is larger than max
-      //              if(height > maxHeight){
-      //                  ratio = maxHeight / height; // get ratio for scaling image
-      //                  $(this).css("height", maxHeight);   // Set new height
-      //                  $(this).css("width", width * ratio);    // Scale width based on ratio
-      //                  width = width * ratio;    // Reset width to match scaled image
-      //              }
-      //          });
-      //      });
 
   </script>
 </head>
@@ -88,8 +50,7 @@
   <ul class="nav nav-pills">
     <li><a class="btn btn-default navbar navbar-brand glyphicon glyphicon-home" href="/">Home</a></li>
     <% if signed_in %>
-        <li><a class="btn btn-default navbar navbar-brand glyphicon glyphicon-plus" href="/create">Create</a></li>
-        <li><a class="btn btn-default navbar navbar-brand glyphicon glyphicon-plus" href="/index-new">Improved Index</a>
+        <li><a class="btn btn-default navbar navbar-brand glyphicon glyphicon-plus" href="/ecomm/create">Create</a></li>
         </li>
     <% end %>
     <li role="presentation" class="dropdown active pull-right">

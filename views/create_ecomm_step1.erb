@@ -1,10 +1,69 @@
-<form method="post" action="/ecomm/create_step_1">
-  <input type="text" name="name" required/>
-  <select name="group">
-    <% @groups.each do |g| %>
-        <option value="<%= g %>"><%= g %></option>
-    <% end %>
+<div class="container">
+  <div class="row clearfix">
+    <div class="col-md-12 column">
+      <form method="post" action="">
+        <input type="hidden" value="1" name="step"/>
+        <input type="hidden" value="<%= @id %>" name="id"/>
+        <input type="text" placeholder="Name" name='name' class="form-control" required/>
+        <input type="text" placeholder="width" value="780" name='width' class="form-control"/>
+        <div id="elements">
+          <table class="table table-bordered table-hover" id="items">
+            <thead>
+            <tr>
+              <th class="text-center">
+                Image URL
+              </th>
+              <th class="text-center">
+                Link URL
+              </th>
+              <th class="text-center">
+                Delete
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr id='0'>
+              <td>
+                <input type="text" name='itm[0][imageURL]' placeholder='Image URL' required class="form-control"/>
+              </td>
+              <td>
+                <input type="text" name='itm[0][linkURL]' placeholder='Link URL' class="form-control"/>
+              </td>
+              <td>
+                <a class="btn btn-danger center-block glyphicon glyphicon-minus delete-row"></a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <a class="btn btn-default pull-left add-row">Add Row</a>
+        <button type="submit" value="step1" class="btn btn-default pull-left">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var i = <%= @e.nil? ? 0 : @e.rows.length %>;
 
-  </select>
-  <button type="submit">Next</button>
-</form>
+        $(".add-row").click(function () {
+            console.log('add row clicked');
+
+            var shtml = "<tr id='" + i + "'>" +
+                    "<td><input name='itm[" + i + "][imageURL]' type='text' placeholder='Image URL' required class='form-control input-md'/> </td>" +
+                    "<td><input name='itm[" + i + "][linkURL]' type='text' placeholder='Link URL'  class='form-control input-md'></td>" +
+                    "<td><a class='btn btn-default pull-right glyphicon glyphicon-minus remove-row'></a></td></tr>";
+            $('#items').append(shtml);
+            i++;
+        });
+
+        $("#elements").on("click", "a", function() {
+            var tr = $(this).closest('tr');
+            tr.css("background-color", "#FF3700");
+            tr.fadeOut(400, function () {
+                tr.remove();
+            });
+            return false;
+        });
+    });
+</script>

@@ -1,12 +1,11 @@
 <form method="post" action="/ecomm/create_step_2">
-  <input type="text" name="name" value="<%= @name %>" readonly required/>
-  <input type="text" name="group" value="<%= @group %>" readonly required/>
-  <button type="submit" class="btn btn-default" id="save_ecomm">Create</button>
-<div id="content" style="border:1px solid black; width:800px;">
-  <% @items.each do |i| %>
-    <img id="<%= i[:_id] %>" class="makeMeDraggable" src="<%= i[:imageURL] %>"/>
-  <% end %>
-</div>
-
+  <input type="hidden" value="2" name="step"/>
+  <input type="text" value="<%= @id %>" name="elem_id"/>
+  <button type="button" class="btn btn-default" id="save_ecomm">Create</button>
+  <div id="content" style="border:1px solid black; width:800px;">
+    <% @items.each do |i| %>
+        <img id="<%= i[:_id] %>" class="makeMeDraggable" src="<%= i[:imageURL] %>"/>
+    <% end %>
+  </div>
 </form>
 

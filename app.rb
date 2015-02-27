@@ -118,10 +118,6 @@ get '/show/:id' do
   erb :show_comm
 end
 
-get '/create' do
-  # puts "logged in user: #{session[:user].to_json}"
-  erb :create_comms
-end
 
 post '/create' do
   puts "logged in user: #{session[:user].to_json}"
@@ -150,83 +146,33 @@ post '/edit/:id' do
   redirect "/show/#{params[:id]}"
 end
 
-get '/index-new' do
-  @groups = getGroups
-  erb :index_new
-end
-
-get '/element/show' do
-  puts "user = #{session[:user]}"
-  puts "user id = #{session[:user].id}"
-  # @ecomms = Ecomm.all("user_id" => session[:user].id)
-  @e = Item.all("user_id" => session[:user].id)
-
-  erb :show_element
-end
-
-get '/element/show/:group' do
-
-  @e = Item.all({"user_id" => session[:user].id, :group => params[:group]})
-
-  erb :show_element
-end
-
-
-get '/element/create' do
-
-  @groups = getGroups
-  puts "arr = #{@groups.to_s}"
-  erb :create_element
-end
-
-post '/element/create' do
-  puts params
-  e = Item.new(:imageURL => params[:imageURL], :user => session[:user], :group => params[:group])
-  e.save
-  redirect '/index-new'
-end
-
-get '/element/edit/:id' do
-  @e = Item.find(params[:id])
-
-  @groups = getGroups
-
-  puts "item = #{@e[:group]}"
-  puts "group = #{@groups}"
-  erb :edit_element
-end
-
-post '/element/edit/:id' do
-  e = Item.find(params[:id])
-  e[:group] = params[:group]
-  if params[:new_group] != ''
-    e[:group] = params[:new_group]
-  elsif e[:group] = params[:group]
-  end
-  e[:imageURL] = params[:imageURL]
-
-  e.save
-  redirect '/element/show'
-end
-
-get '/element/delete/:id' do
-  Item.destroy(params[:id])
-  redirect '/element/show'
-end
-
 get '/ecomm/create' do
-  @groups = getGroups
   erb :create_ecomm_step1
 end
 
-post '/ecomm/create_step_1' do
-  # puts "params = #{params}"
-  @items = Item.all({:group => params[:group]})
-  @name = params[:name]
-  @group = params[:group]
-  # puts "items = #{@items.to_s}"
-  erb :create_ecomm_step2
+post '/ecomm/create' do
+  #create ecomm and save elements
+  puts "params = #{params}"
+  if params[:step].to_i == 1
+    e = Ecomm.new(:user => session[:user], :width => params[:width].to_i, :name => params[:name])
+    params[:itm].each do |index, item|
+      i = Item.new(:imageURL => item[:imageURL])
+      i.save
+      e.items << i
+    end
+    e.save
+    @items = e.items
+    @id = e[:_id]
+    erb :create_ecomm_step2
+  elsif params[:step].to_i == 2
+    e = Ecomm.find(params[:elem_id])
+    @html = createTable(e.items)
+    erb :create_ecomm_step3
+  end
+
 end
+
+
 
 post '/ecomm/create_step_2' do
   @items = Item.all(:group => params[:group], :order => :yPos)
@@ -288,10 +234,12 @@ end
 
 post '/ecomm/item/savePos' do
   puts "params = #{params}"
+  puts "ecomm = #{params[:ecomm]}"
   puts "id = #{params[:id]}"
   puts "x pos = #{params[:x]}"
   puts "y pos = #{params[:y]}"
-  i = Item.find(params[:id])
+  e = Ecomm.find(params[:ecomm])
+  i = e.items.find(params[:id])
   i[:xPos] = params[:x]
   i[:yPos] = params[:y]
   i.save
@@ -336,91 +284,5 @@ get '/seed' do
   i.save
   i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_19.jpg', :group => 'february', :user => session[:user])
   i.save
-end
-
-def save(ecomm, params)
-  row = Row.new()
-  col = Column.new()
-  # puts params
-  # puts ""
-  # puts ""
-  # puts params[:itm]
-  # puts ""
-  # puts ""
-  # puts params[:itm].to_a.to_s
-  # puts ""
-  # puts ""
-
-  i = 0
-  if params[:itm].nil?
-    #no elements, nothing to save
-    return ecomm
-  end
-
-
-  params[:itm].each do |index, item|
-    elem = Element.new(:imageURL => item[:imageURL], :linkURL => item[:linkURL], :row => item[:row], :column => item[:column])
-    col[:element] = elem
-    row.columns << col
-    if (i.to_i == params[:itm].to_a.length-1)
-      #we are on last item
-      puts "saving row"
-      ecomm.rows << row
-    elsif (params[:itm].to_a[i+1][1][:row].to_i != item[:row].to_i)
-      #next item will we start of new row so we can write the current one
-      puts "saving row and creating new row"
-      ecomm.rows << row
-      row = Row.new()
-    else
-      #     we have a row with multiple columns so do not write the row yet
-      puts "multiple rows"
-    end
-    col = Column.new()
-    i = i + 1
-  end
-  ecomm.save
-  return ecomm
-end
-
-# def createHTML(data)
-#   html = '<html><head><title></title></head><body><table border="0" cellspacing="0" cellpadding="0">'
-#   data.rows.each do |row|
-#     html = html + "<tr>"
-#     row.columns.each do |col|
-#       if row.columns.size > 1 && row.columns.first == col
-#         html = html + '<table border="0" cellspacing="0" cellpadding="0">'
-#         html = html + '<tr>'
-#       end
-#       html = html + "<td>"
-#       if col.element[:linkURL]
-#         html = html + "<a href='#{col.element[:linkURL]}'>"
-#       end
-#       html = html + "<img src='#{col.element[:imageURL]}'>"
-#       if col.element[:linkURL]
-#         html = html + "</a>"
-#       end
-#       html = html + "</td>"
-#
-#       if row.columns.size > 1 && row.columns.last == col
-#         html = html + '</tr></table>'
-#       end
-#     end
-#     html = html + '</tr>'
-#   end
-#   html = html + '</table></body></html>'
-#
-#   data[:html] = html
-#   data.save
-# end
-
-def getGroups
-  items = Item.all()
-  arr = []
-  items.each do |g|
-    if !arr.include? g[:group]
-      arr << g[:group]
-    end
-  end
-  return arr
 end
 
