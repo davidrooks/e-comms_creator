@@ -17,40 +17,13 @@
 
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
-  <script type="text/javascript">
-
-      $(document).ready(function () {
-          $("#save_ecomm").click(function () {
-              console.log('create button clicked');
-              $("img").each(function (index) {
-                  var elem_id = $("input").val();
-                  var position = $(this).position();
-                  var id = $(this).attr("id");
-                  console.log("ecomm - " + elem_id)
-                  console.log(index + " - left: " + position.left + ", top: " + position.top)
-                  $.post("/ecomm/item/savePos", {ecomm: elem_id, id: id, x: position.left, y: position.top});
-              })
-          });
-      });
-
-      $(init);
-
-      function init() {
-          $('.makeMeDraggable').draggable({
-              cursor: 'move',
-              containment: 'content',
-              snap: true
-          });
-      }
-
-  </script>
 </head>
 <body>
 <div class="container">
   <ul class="nav nav-pills">
     <li><a class="btn btn-default navbar navbar-brand glyphicon glyphicon-home" href="/">Home</a></li>
     <% if signed_in %>
-        <li><a class="btn btn-default navbar navbar-brand glyphicon glyphicon-plus" href="/ecomm/create">Create</a></li>
+        <li><a class="btn btn-default navbar navbar-brand glyphicon glyphicon-plus" href="/create">Create</a></li>
         </li>
     <% end %>
     <li role="presentation" class="dropdown active pull-right">
