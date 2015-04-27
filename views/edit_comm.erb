@@ -1,87 +1,72 @@
 <div class="container">
   <div class="row clearfix">
     <div class="col-md-12 column">
-      <form method="post" action="">
+        <form method="post" action="">
+        <input type="hidden" value="1" name="step"/>
+        <input type="hidden" value="<%= @e[:_id] %>" name="id"/>
         <input type="text" value="<%= @e[:name] %>" name='name' class="form-control" required/>
-        <input type="text" value="<%= @e[:width] %>" name='width' class="form-control"/>
+        <input type="text" value="<%= @e[:width] %>" value="780" name='width' class="form-control"/>
         <div id="elements">
-        <table class="table table-bordered table-hover" id="items">
-          <thead>
-          <tr>
-            <th class="text-center">
-              Row
-            </th>
-            <th class="text-center">
-              Column
-            </th>
-            <th class="text-center">
-              Image URL
-            </th>
-            <th class="text-center">
-              Link URL
-            </th>
-            <th class="text-center">
-              Delete
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-
+          <table class="table table-bordered table-hover" id="items">
+            <thead>
+            <tr>
+              <th class="text-center">
+                Image URL
+              </th>
+              <th class="text-center">
+                Link URL
+              </th>
+              <th class="text-center">
+                Delete
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            
           <% r = 0 %>
-          <% @e.rows.each do |row| %>
-              <tr id="<%= r %>">
-                <% row.columns.each do |col| %>
-                  <tr>
-                    <td>
-                      <input type="text" value="<%= col.element[:row] %>" name='itm[<%= r %>][row]' class="form-control"/>
+          <% @e.items.each do |item| %>
+                  <tr id='<%= r %>'>
+              		<td>
+                      <input type="text" name='itm[<%= r %>][imageURL]' value='<%= item[:imageURL] %>' class="form-control"/>
                     </td>
                     <td>
-                      <input type="text" value="<%= col.element[:column] %>" name='itm[<%= r %>][column]' class="form-control"/>
-                    </td>
-                    <td>
-                      <input type="text" name='itm[<%= r %>][imageURL]' value='<%= col.element[:imageURL] %>' class="form-control"/>
-                    </td>
-                    <td>
-                      <input type="text" name='itm[<%= r %>][linkURL]' value='<%= col.element[:linkURL] %>' class="form-control"/>
+                      <input type="text" name='itm[<%= r %>][linkURL]' value='<%= item[:linkURL] %>' class="form-control"/>
                     </td>
                     <td>
                       <a class="btn btn-default pull-right glyphicon glyphicon-minus delete-row"></a>
                     </td>
-                  </tr>
-                  <% r = r + 1 %>
-              <% end %>
-          <% end %>
-          </tbody>
-        </table>
-          </div>
+            	</tr>                    
+                <% r = r + 1 %>
+          <% end %>                    
+            </tbody>
+          </table>
+        </div>
         <a class="btn btn-default pull-left add-row">Add Row</a>
         <button type="submit" class="btn btn-default pull-left">Submit</button>
       </form>
     </div>
   </div>
 </div>
+
 <script type="text/javascript">
-    $(document).ready(function () {
-        var i = <%= @e.nil? ? 0 : @e.rows.length %>;
-        var r = <%= @e.nil? ? 0 : @e.rows.length %>;
+    $( document ).ready(function () {
+        var i = <%= @e.nil? ? 0 : @e.items.length %>;
 
-        $(".add-row").click(function () {
-            console.log('add row clicked');
+        $( '.add-row' ).on( 'click', function() {
+            console.log( 'add row clicked' );
 
-            var shtml = "<tr id='" + i + "'><td><input name='itm[" + i + "][row]' type='text' required class='form-control'/></td>" +
-                    "<td><input name='itm[" + i + "][column]' type='text' required class='form-control'/></td>" +
+            var shtml = "<tr id='" + i + "'>" +
                     "<td><input name='itm[" + i + "][imageURL]' type='text' placeholder='imageURL' required class='form-control input-md'/> </td>" +
                     "<td><input name='itm[" + i + "][linkURL]' type='text' placeholder='Link URL'  class='form-control input-md'></td>" +
-                    "<td><a class='btn btn-default pull-right glyphicon glyphicon-minus remove-row'></a></td></tr>";
-//            $("tr:last").after(shtml);
-//            $(this).closest('TR').after(shtml);
-//            $('#' + i).html(shtml);
+                    "<td><a class='btn btn-danger center-block glyphicon glyphicon-minus delete-row'></a></td></tr>";
+
             $('#items').append(shtml);
             i++;
-            r++;
         });
+        
 
-        $("#elements").on("click", "a", function() {
+	 	$( '#items' ).on('click', '.delete-row', function() {
+	 		console.log( 'delete row clicked' );
             var tr = $(this).closest('tr');
             tr.css("background-color", "#FF3700");
             tr.fadeOut(400, function () {
@@ -89,28 +74,5 @@
             });
             return false;
         });
-
-//        $(".add-column").click(function () {
-//            console.log('add column clicked');
-//            var shtml = "<tr id='" + i + "'><td><input name='itm[" + i + "][row]' type='text' value='" + r + "' class='form-control'/></td>" +
-//                    "<td><input name='itm[" + i + "][column]' type='text' value='" + (c + 1) + "' class='form-control'/></td>" +
-//                    "<td><input name='itm[" + i + "][imageURL]' type='text' placeholder='imageURL' class='form-control input-md'/> </td>" +
-//                    "<td><input name='itm[" + i + "][linkURL]' type='text' placeholder='Link URL'  class='form-control input-md'></td>" +
-//                    "<td><a class='btn btn-default pull-right glyphicon glyphicon-minus delete-row'></a></td></tr>";
-//
-//            $('#items').append(shtml);
-////            $(this).closest('TR').after(shtml);
-//            i++;
-//            c++;
-//        });
-//
-//        $(".delete-column").click(function () {
-//            var tr = $(this).closest('tr');
-//            tr.css("background-color", "#FF3700");
-//            tr.fadeOut(400, function () {
-//                tr.remove();
-//            });
-//            return false;
-//        });
     });
 </script>

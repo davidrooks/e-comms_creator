@@ -1,6 +1,44 @@
+<style>
+  .makeMeDraggable {
+    border: 1px solid black;
+    margin: 0px;
+    padding: 0px
+  }
+</style>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
+<script type="text/javascript">
+
+  $(document).ready(function () {
+    $("#save_ecomm").click(function () {
+      console.log('create button clicked');
+      $("img").each(function (index) {
+        var elem_id = $('#elem_id').attr("value");
+        var position = $(this).position();
+        var id = $(this).attr("id");
+        console.log("ecomm - " + elem_id)
+        console.log(id + " - left: " + position.left + ", top: " + position.top)
+        $.post("/ecomm/item/savePos", {ecomm: elem_id, id: id, x: position.left, y: position.top});
+      })
+    });
+  });
+
+  $(init);
+
+  function init() {
+    $('.makeMeDraggable').draggable({
+      cursor: 'move',
+      containment: 'content',
+      snap: true
+    });
+  }
+
+</script>
+
 <form method="post" action="/ecomm/create_step_2">
   <input type="hidden" value="2" name="step"/>
-  <input type="text" value="<%= @id %>" name="elem_id"/>
+  <input type="text" value="<%= @id %>" name="elem_id" id="elem_id"/>
   <button type="button" class="btn btn-default" id="save_ecomm">Create</button>
   <div id="content" style="border:1px solid black; width:800px;">
     <% @items.each do |i| %>

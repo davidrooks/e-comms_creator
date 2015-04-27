@@ -43,21 +43,24 @@
   </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function () {
-        var i = <%= @e.nil? ? 0 : @e.rows.length %>;
+    $( document ).ready(function () {
+        var i = 1;
 
-        $(".add-row").click(function () {
-            console.log('add row clicked');
+        $( '.add-row' ).on( 'click', function() {
+            console.log( 'add row clicked' );
 
             var shtml = "<tr id='" + i + "'>" +
-                    "<td><input name='itm[" + i + "][imageURL]' type='text' placeholder='Image URL' required class='form-control input-md'/> </td>" +
+                    "<td><input name='itm[" + i + "][imageURL]' type='text' placeholder='imageURL' required class='form-control input-md'/> </td>" +
                     "<td><input name='itm[" + i + "][linkURL]' type='text' placeholder='Link URL'  class='form-control input-md'></td>" +
-                    "<td><a class='btn btn-default pull-right glyphicon glyphicon-minus remove-row'></a></td></tr>";
+                    "<td><a class='btn btn-danger center-block glyphicon glyphicon-minus delete-row'></a></td></tr>";
+
             $('#items').append(shtml);
             i++;
         });
+        
 
-        $("#elements").on("click", "a", function() {
+	 	$( '#items' ).on('click', '.delete-row', function() {
+	 		console.log( 'delete row clicked' );
             var tr = $(this).closest('tr');
             tr.css("background-color", "#FF3700");
             tr.fadeOut(400, function () {

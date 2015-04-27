@@ -118,39 +118,11 @@ get '/show/:id' do
   erb :show_comm
 end
 
+get '/create' do
+	erb :create_ecomm_step1
+end
 
 post '/create' do
-  puts "logged in user: #{session[:user].to_json}"
-  e = Ecomm.new(:user => session[:user], :width => params[:width].to_i, :name => params[:name])
-
-  e = save(e, params)
-  createHTML(e)
-  redirect "/show/#{e[:_id]}"
-end
-
-get '/delete/:id' do
-  Ecomm.destroy(params[:id])
-  redirect '/'
-end
-
-get '/edit/:id' do
-  @e = Ecomm.find(params[:id])
-  erb :edit_comm
-end
-
-post '/edit/:id' do
-  e = Ecomm.find(params[:id])
-  e.rows.clear
-  e = save(e, params)
-  createHTML(e)
-  redirect "/show/#{params[:id]}"
-end
-
-get '/ecomm/create' do
-  erb :create_ecomm_step1
-end
-
-post '/ecomm/create' do
   #create ecomm and save elements
   puts "params = #{params}"
   if params[:step].to_i == 1
@@ -169,10 +141,62 @@ post '/ecomm/create' do
     @html = createTable(e.items)
     erb :create_ecomm_step3
   end
-
 end
 
+get '/delete/:id' do
+  Ecomm.destroy(params[:id])
+  redirect '/'
+end
 
+get '/edit/:id' do
+  @e = Ecomm.find(params[:id])
+  erb :edit_comm
+end
+
+post '/edit/:id' do
+  if params[:step].to_i == 1
+    e = Ecomm.find(params[:id])
+    e.items.clear
+    params[:itm].each do |index, item|
+      i = Item.new(:imageURL => item[:imageURL])
+      i.save
+      e.items << i
+    end
+    e.save
+    @items = e.items
+    @id = e[:_id]
+    erb :create_ecomm_step2
+  elsif params[:step].to_i == 2
+    e = Ecomm.find(params[:elem_id])
+    @html = createTable(e.items)
+    erb :create_ecomm_step3
+  end
+end
+
+get '/ecomm/create' do
+  erb :create_ecomm_step1
+end
+
+post '/ecomm/create' do
+  #create ecomm and save elements
+  if params[:step].to_i == 1
+    e = Ecomm.new(:user => session[:user], :width => params[:width].to_i, :name => params[:name])
+    params[:itm].each do |index, item|
+      i = Item.new(:imageURL => item[:imageURL])
+      i.save
+      e.items << i
+    end
+    e.save
+    @items = e.items
+    @id = e[:_id]
+    erb :create_ecomm_step2
+  elsif params[:step].to_i == 2
+    e = Ecomm.find(params[:elem_id])
+    @html = createTable(e.items)
+    erb :create_ecomm_step3
+  end
+
+end
 
 post '/ecomm/create_step_2' do
   @items = Item.all(:group => params[:group], :order => :yPos)
@@ -246,43 +270,6 @@ post '/ecomm/item/savePos' do
 end
 
 get '/seed' do
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_01.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_02.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_03.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_04.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_05.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_06.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_07.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_08.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_09.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_10.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_11.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_12.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_13.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_14.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_15.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_16.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_17.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_18.jpg', :group => 'february', :user => session[:user])
-  i.save
-  i = Item.new(:imageURL => 'http://samsaramindandbody.com/sites/default/files/pictures/nl3_19.jpg', :group => 'february', :user => session[:user])
-  i.save
+ 
 end
 
