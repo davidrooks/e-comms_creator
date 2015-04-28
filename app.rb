@@ -168,64 +168,71 @@ post '/edit/:id' do
     erb :create_ecomm_step2
   elsif params[:step].to_i == 2
     e = Ecomm.find(params[:elem_id])
-    @html = createTable(e.items)
-    erb :create_ecomm_step3
-  end
-end
-
-get '/ecomm/create' do
-  erb :create_ecomm_step1
-end
-
-post '/ecomm/create' do
-  #create ecomm and save elements
-  if params[:step].to_i == 1
-    e = Ecomm.new(:user => session[:user], :width => params[:width].to_i, :name => params[:name])
-    params[:itm].each do |index, item|
-      i = Item.new(:imageURL => item[:imageURL])
-      i.save
-      e.items << i
-    end
+    @id = e[:_id]
+    tmp = e.items.sort_by{|x| [x[:yPos].to_i, x[:xPos].to_i]}
+    e.items.clear
+    e.items = tmp
     e.save
     @items = e.items
-    @id = e[:_id]
     erb :create_ecomm_step2
-  elsif params[:step].to_i == 2
-    e = Ecomm.find(params[:elem_id])
-    @html = createTable(e.items)
-    erb :create_ecomm_step3
   end
-
 end
 
-post '/ecomm/create_step_2' do
-  @items = Item.all(:group => params[:group], :order => :yPos)
-  rows = []
-  cols = []
+# get '/ecomm/create' do
+#   erb :create_ecomm_step1
+# end
+#
+# post '/ecomm/create' do
+#   #create ecomm and save elements
+#   if params[:step].to_i == 1
+#     e = Ecomm.new(:user => session[:user], :width => params[:width].to_i, :name => params[:name])
+#     params[:itm].each do |index, item|
+#       i = Item.new(:imageURL => item[:imageURL])
+#       i.save
+#       e.items << i
+#     end
+#     e.save
+#     @items = e.items
+#     @id = e[:_id]
+#     erb :create_ecomm_step2
+#   elsif params[:step].to_i == 2
+#     e = Ecomm.find(params[:elem_id])
+#     # @html = createTable(e.items)
+#     puts e.items
+#
+#     erb :create_ecomm_step2
+#   end
+#
+# end
 
-  @items.each_with_index do |i, index|
-    puts "item = #{i}"
-    puts "index = #{index}"
-    cols << i
-    if i != @items.last
-      #we are not on the last item so check the next items position
-      next_i = @items[index+1]
-      if next_i[:yPos] > i[:yPos]
-        #next item is lower than current item so it sits in a new row
-        rows << cols
-        cols = []
-      end
-    else
-      rows << cols
-    end
-  end
-  puts "rows = #{rows.to_s}"
-
-  @html = createTable(rows)
-  puts "html: #{@html}"
-
-  erb :create_ecomm_step3
-end
+# post '/ecomm/create_step_2' do
+#   @items = Item.all(:group => params[:group], :order => :yPos)
+#   rows = []
+#   cols = []
+#
+#   @items.each_with_index do |i, index|
+#     puts "item = #{i}"
+#     puts "index = #{index}"
+#     cols << i
+#     if i != @items.last
+#       #we are not on the last item so check the next items position
+#       next_i = @items[index+1]
+#       if next_i[:yPos] > i[:yPos]
+#         #next item is lower than current item so it sits in a new row
+#         rows << cols
+#         cols = []
+#       end
+#     else
+#       rows << cols
+#     end
+#   end
+#   puts "rows = #{rows.to_s}"
+#
+#   @html = createTable(rows)
+#   puts "html: #{@html}"
+#
+#   erb :create_ecomm_step3
+# end
 
 def createTable(rows)
   html = "<table  border='0' cellspacing='0' cellpadding='0'>"
