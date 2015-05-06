@@ -1,9 +1,18 @@
 <div class="row">
-  <h1>HTML</h1>
   <a href="/edit/<%= @e[:_id] %>" class="btn glyphicon glyphicon-pencil">Edit</a>
   <a href="/delete/<%= @e[:_id] %>" class="btn glyphicon glyphicon-trash">Delete</a>
+  <h1>HTML</h1>
   <pre>
-    <code><%= @e[:html] %></code>
+    <code><%= @html %></code>
+  </pre>
+</div>
+</br>
+<div class="row">
+  <a href="/edit/<%= @e[:_id] %>" class="btn glyphicon glyphicon-pencil">Edit</a>
+  <a href="/delete/<%= @e[:_id] %>" class="btn glyphicon glyphicon-trash">Delete</a>
+  <h1>CODE</h1>
+  <pre>
+    <code><%= @html_code %></code>
   </pre>
 </div>
 </br>

@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'json'
 require 'logger'
+require 'htmlbeautifier'
 require './database'
 
 configure do
@@ -115,6 +116,14 @@ end
 
 get '/show/:id' do
   @e = Ecomm.find(params[:id])
+  items = @e.items
+  puts "items = #{@items}"
+  @html = createTable(items)
+  @html_code = @html
+  @html_code = @html_code.gsub(/&/, '&amp')
+  @html_code = @html_code.gsub(/</, '&lt')
+  @html_code = @html_code.gsub(/>/, '&gt')
+  @html_code = HtmlBeautifier.beautify(@html_code, tab_stops: 4)
   erb :show_comm
 end
 
@@ -139,7 +148,7 @@ post '/create' do
   elsif params[:step].to_i == 2
     e = Ecomm.find(params[:elem_id])
     @html = createTable(e.items)
-    erb :create_ecomm_step3
+    erb :show_comm
   end
 end
 
@@ -167,101 +176,73 @@ post '/edit/:id' do
     @id = e[:_id]
     erb :create_ecomm_step2
   elsif params[:step].to_i == 2
-    e = Ecomm.find(params[:elem_id])
-    @id = e[:_id]
-    tmp = e.items.sort_by{|x| [x[:yPos].to_i, x[:xPos].to_i]}
-    e.items.clear
-    e.items = tmp
-    e.save
-    @items = e.items
-    erb :create_ecomm_step2
+    @e = Ecomm.find(params[:elem_id])
+    # @id = e[:_id]
+    tmp = @e.items.sort_by{|x| [x[:yPos].to_i, x[:xPos].to_i]}
+    @e.items.clear
+    @e.items = tmp
+    @e.save
+    # @items = e.items
+    @html = createTable(@e.items)
+    erb :show_comm
   end
 end
 
-# get '/ecomm/create' do
-#   erb :create_ecomm_step1
-# end
-#
-# post '/ecomm/create' do
-#   #create ecomm and save elements
-#   if params[:step].to_i == 1
-#     e = Ecomm.new(:user => session[:user], :width => params[:width].to_i, :name => params[:name])
-#     params[:itm].each do |index, item|
-#       i = Item.new(:imageURL => item[:imageURL])
-#       i.save
-#       e.items << i
-#     end
-#     e.save
-#     @items = e.items
-#     @id = e[:_id]
-#     erb :create_ecomm_step2
-#   elsif params[:step].to_i == 2
-#     e = Ecomm.find(params[:elem_id])
-#     # @html = createTable(e.items)
-#     puts e.items
-#
-#     erb :create_ecomm_step2
-#   end
-#
-# end
-
-# post '/ecomm/create_step_2' do
-#   @items = Item.all(:group => params[:group], :order => :yPos)
-#   rows = []
-#   cols = []
-#
-#   @items.each_with_index do |i, index|
-#     puts "item = #{i}"
-#     puts "index = #{index}"
-#     cols << i
-#     if i != @items.last
-#       #we are not on the last item so check the next items position
-#       next_i = @items[index+1]
-#       if next_i[:yPos] > i[:yPos]
-#         #next item is lower than current item so it sits in a new row
-#         rows << cols
-#         cols = []
-#       end
-#     else
-#       rows << cols
-#     end
-#   end
-#   puts "rows = #{rows.to_s}"
-#
-#   @html = createTable(rows)
-#   puts "html: #{@html}"
-#
-#   erb :create_ecomm_step3
-# end
-
-def createTable(rows)
-  html = "<table  border='0' cellspacing='0' cellpadding='0'>"
-  rows.each do |row|
-    html = html + "<tr>"
-    row.each do |col|
-      if col.kind_of?(Array)
-        puts "shouldnt reach here yet"
-        html = html + createTable(col)
-      elsif row.count == 1
-        #only 1 item in this row
-        html = html + "<td><img src='" + col[:imageURL] + "'/></td>"
+def createTable(items)
+  columns = []
+  rows = []
+  i = 0
+  prevX = 0
+  prevY = 0
+  while i <= items.size - 1
+    item = items[i]
+    if i == 0
+      # first item so add to column
+      columns << item
+    else
+      # not on first element
+      if item[:yPos] != prevY
+        # we are on a new row
+        rows << columns
+        columns = []
+        columns << item
       else
-        if col == row.first
-          html = html + "<table  border='0' cellspacing='0' cellpadding='0'>"
-          html = html + "<tr>"
-        end
-        html = html + "<td><img src='" + col[:imageURL] + "'/></td>"
-        if col == row.last
-          html = html + "</tr>"
-          html = html + "</table>"
-        end
+        # we are on same row
+        columns << item
       end
     end
-    html = html + "</tr>"
+    if i == items.size - 1
+      rows << columns
+    end
+    prevX = item[:xPos]
+    prevY = item[:yPos]
+    i += 1
   end
-  html = html + "</table>"
+
+  puts "rows = #{rows}"
+
+  html = ''
+  rows.each do |cols|
+    cols.each do |col|
+      if cols == rows.first && col == cols.first
+        html = html + "<table  border='0' cellspacing='0' cellpadding='0'>"
+      end
+      if col == cols.first
+        html = html + "<tr>"
+      end
+      html = html + "<td><img src='" + col[:imageURL] + "'/></td>"
+      if col == cols.last
+        html = html + "</tr>"
+      end
+      if cols == rows.last && col == cols.last
+        html = html + "</table>"
+      end
+    end
+  end
+  puts "html = #{html}"
   return html
 end
+
 
 post '/ecomm/item/savePos' do
   puts "params = #{params}"
@@ -275,8 +256,3 @@ post '/ecomm/item/savePos' do
   i[:yPos] = params[:y]
   i.save
 end
-
-get '/seed' do
- 
-end
-

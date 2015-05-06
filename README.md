@@ -23,4 +23,6 @@ Then open [http://localhost:4567/](http://localhost:4567/)
 
 What's next?
 ============
+- shrink image size when laying out ecomm
+- snap images to a grid - http://jqueryui.com/draggable/#snap-to
 - openshift integration / deployment
